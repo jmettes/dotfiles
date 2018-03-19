@@ -1,0 +1,6 @@
+[user]
+	email = jonathan@jmettes.com
+	name = Jonathan Mettes
+[alias]
+    # https://stackoverflow.com/questions/1057564/pretty-git-branch-graphs#45991969
+	hist = log --graph --date-order --date=short --pretty=format:'%C(auto)%h%d %C(reset)%s %C(bold blue)%ce %C(reset)%C(green)%cr (%cd)'

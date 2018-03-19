@@ -2,6 +2,7 @@ import XMonad
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.SetWMName
+import XMonad.Hooks.EwmhDesktops
 import XMonad.Layout.NoBorders
 import XMonad.Util.EZConfig (additionalKeys)
 import XMonad.Util.Run (spawnPipe)
@@ -12,11 +13,11 @@ main :: IO ()
 main = do
     xmproc <- spawnPipe "xmobar"
     xmonad $ def
-        { terminal = "xterm -sl 1000"
+        { terminal = "xterm"
         , manageHook = manageDocks <+> manageHook def
         , layoutHook = avoidStruts $ smartBorders $ layoutHook def
         , startupHook = setWMName "LG3D" -- java swing
-        , handleEventHook = handleEventHook def <+> docksEventHook
+        , handleEventHook = handleEventHook def <+> docksEventHook <+> fullscreenEventHook
         , logHook = dynamicLogWithPP xmobarPP
             { ppOutput = hPutStrLn xmproc
             , ppTitle = xmobarColor "grey" "" . shorten 53
