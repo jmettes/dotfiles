@@ -4,11 +4,38 @@ Xft.rgba: rgb
 Xft.hinting: true
 Xft.hintstyle: hintslight
 URxvt.scrollBar: false
-!! URxvt.font: xft:DejaVu Sans Mono:pixelsize=21
-URxvt.font:             xft:Source Code Pro for Powerline-10:pixelsize=21:hinting=True;antialias:True
-!!URxvt.boldFont:             xft:Source Code Pro for Powerline-10:pixelsize=21:bold;hinting=True;antialias:True
+URxvt.font: xft:dejavu sans mono:pixelsize=21:antialias=true,hinting=true
 URxvt.intensityStyles: false
+! single clipboard
+URxvt.perl-ext-common: selection-to-clipboard
 
+!! Cursor word movement
+URxvt*altSendsEscape: true
+URxvt.keysym.Control-Up:   \033[1;5A
+URxvt.keysym.Control-Down:    \033[1;5B
+URxvt.keysym.Control-Left:    \033[1;5D
+URxvt.keysym.Control-Right: \033[1;5C
+
+!!URxvt.boldFont:             xft:Source Code Pro for Powerline-10:pixelsize=21:bold;hinting=True;antialias:True
+!! URxvt.font: xft:DejaVu Sans Mono:pixelsize=21
+
+! xterm
+
+XTerm*font: xft:Source Code Pro for Powerline-10:pixelsize=25:hinting=True;antialias:True
+! sync primary and main clipboards
+XTerm*selectToClipboard: true
+! double-click highlights words until blank text
+XTerm*VT100.cutNewLine: false
+XTerm*VT100.cutToBeginningOfLine: false
+XTerm*VT100.charClass: 33:48,35:48,37:48,42:48,45-47:48,64:48,95:48,126:48
+
+
+
+!xterm*dynamiccolors:      true
+!xterm*utf8:               2
+!xterm*geometry:           WINDOWGEOMETRY
+!xterm*visualBell:         off
+xterm*highlightSelection: true
 
 ! solarized
 
