@@ -14,10 +14,25 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # bluetooth
+  hardware.bluetooth.enable = true;
+  hardware.pulseaudio = {
+    enable = true;
+
+    # NixOS allows either a lightweight build (default) or full build of PulseAudio to be installed.
+    # Only the full build has Bluetooth support, so it must be selected here.
+    package = pkgs.pulseaudioFull;
+
+    extraConfig = ''
+      load-module module-switch-on-connect
+    '';
+  };
+
+
   networking.hostName = "nixos"; # Define your hostname.
   #networking.networkmanager.enable = true;
   networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  #networking.proxy.default = "http://proxy.inno.lan:3128";
+#  networking.proxy.default = "http://proxy.inno.lan:3128";
    networking.firewall = {
        # Disabled due to Chromecast problem
        # https://github.com/NixOS/nixpkgs/issues/3107
@@ -43,6 +58,8 @@
   # $ nix-env -qaP | grep wget
   environment.systemPackages = with pkgs; [
     systemToolsEnv
+    arc-theme
+    alsaUtils
     chromium
     dropbox
     vivaldi
@@ -58,19 +75,36 @@
     haskellPackages.xmonad
     haskellPackages.xmonad-contrib
     haskellPackages.xmonad-extras
+    htpdate
     pcmanfm
     xorg.xbacklight
     xbindkeys
     xautomation
     rxvt_unicode
     pulseaudioFull
+    zsh
+    oh-my-zsh
   ];
+
+  programs.zsh.interactiveShellInit = ''
+    export ZSH=${pkgs.oh-my-zsh}/share/oh-my-zsh/
+    ZSH_THEME="agnoster"
+    plugins=()
+    DISABLE_AUTO_UPDATE=true
+    source $ZSH/oh-my-zsh.sh
+  '';
+
+  programs.zsh.enable = true;
+  programs.zsh.promptInit = "";
+
 
   fonts = {
     enableFontDir = true;
     enableGhostscriptFonts = true;
     fonts = with pkgs; [
       corefonts
+      dejavu_fonts
+      powerline-fonts
       source-code-pro
       inconsolata
       ubuntu_font_family
@@ -119,40 +153,41 @@
 
     # modules = [ pkgs.xf86_input_mtrack ];
 
-multitouch.invertScroll = true;
-multitouch.ignorePalm = true;
+#multitouch.invertScroll = true;
+#multitouch.ignorePalm = true;
+#
+#libinput.enable = true;
+#libinput.naturalScrolling = false;
+#libinput.tapping = true;
+#libinput.disableWhileTyping = true;
+#libinput.horizontalScrolling = false;
+#libinput.scrollMethod = "twofinger";
+#libinput.additionalOptions = ''
+#  Option "TappingDrag" "false"
+#'';
 
-libinput.enable = true;
-libinput.naturalScrolling = false;
-libinput.tapping = true;
-libinput.disableWhileTyping = true;
-libinput.horizontalScrolling = false;
-libinput.additionalOptions = ''
-  Option "TappingDrag" "false"
-'';
 
+    synaptics = {
+      enable = true;
+      tapButtons = true;
+      fingersMap = [1 3 2];
+      horizTwoFingerScroll = true;
+      vertTwoFingerScroll = true;
+      scrollDelta = 107;
+      accelFactor = "0.1";
+      twoFingerScroll = true;
 
-#    synaptics = {
-#      enable = true;
-#      tapButtons = true;
-#      fingersMap = [1 3 2];
-#      horizTwoFingerScroll = true;
-#      vertTwoFingerScroll = true;
-#      scrollDelta = 107;
-#      accelFactor = "0.1";
-#      twoFingerScroll = true;
-
-#      # palm detection
-#      # https://askubuntu.com/questions/229311/synaptics-touchpad-solving-2-finger-problem-triggered-by-resting-palm/772103#772103
-#      palmDetect = true;
-#      palmMinWidth = 10;
-#      palmMinZ = 0;
+      # palm detection
+      # https://askubuntu.com/questions/229311/synaptics-touchpad-solving-2-finger-problem-triggered-by-resting-palm/772103#772103
+      palmDetect = true;
+      palmMinWidth = 10;
+      palmMinZ = 0;
 #      additionalOptions = ''
 #        # https://askubuntu.com/a/772103
 #        Option "AreaLeftEdge" "2000"
 #        Option "AreaRightEdge" "5500"
 #      '';
-#    };
+    };
 
 # libinput has "disableWhileTyping", which works pretty well for palm detection
 # but does not support 'kinetic scrolling/coasting' like synaptics:
@@ -192,12 +227,14 @@ libinput.additionalOptions = ''
     wheelNeedsPassword = false;
   };
 
+  users.defaultUserShell = "/run/current-system/sw/bin/zsh";
   users.extraUsers.jonathan = {
     isNormalUser = true;
     uid = 1000;
     description = "Jonathan Mettes";
     home = "/home/jonathan";
     extraGroups = [ "wheel" "docker" ];
+    shell = "/run/current-system/sw/bin/zsh";
  };
 
  users.extraUsers.brandon = {

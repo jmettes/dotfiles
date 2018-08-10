@@ -4,6 +4,10 @@ Config { font = "xft:Bitstream Vera Sans Mono:size=12:medium:antialias=true"
        , position = TopW L 100
        , commands = [ Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 10
                     , Run Memory ["-t","Memory: <usedratio>%"] 10
+                    , Run DiskU [("/", "Disk: <usedp>%")]
+                                ["-L", "20", "-H", "80", "-m", "1", "-p", "2",
+                                "--normal", "grey50", "--high", "#a0522d",
+                                "--low", "#2f4f4f"] 10
                     , Run Network "wlp4s0" ["-t","Network: <rx>|<tx>","-S", "True", "-w", "8", "-c", "0"] 10
 					, Run Battery
 						[ "--template" , "Battery: <acstatus>"
@@ -26,5 +30,5 @@ Config { font = "xft:Bitstream Vera Sans Mono:size=12:medium:antialias=true"
                     ]
        , sepChar = "%"
        , alignSep = "}{"
-       , template = "<fc=#ee9a00>%StdinReader%</fc> }{ <fc=#ee9a00>%cpu%,  %memory%,  %wlp4s0%,  %battery%,  %date%</fc>  "
+       , template = "<fc=#ee9a00>%StdinReader%</fc> }{ <fc=#ee9a00>%cpu%,  %memory%,  %disku%,  %wlp4s0%,  %battery%,  %date%</fc>  "
        }
