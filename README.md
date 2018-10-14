@@ -20,3 +20,7 @@ $ config add <my changed dot files>
 $ config commit -m "update"
 $ config push origin master
 ```
+
+## todo
+
+- reorganise dotfiles to be configured through nix

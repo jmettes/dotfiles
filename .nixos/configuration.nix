@@ -1,4 +1,4 @@
-## Edit this configuration file to define what should be installed on
+# Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
@@ -69,13 +69,14 @@
     exfat
     feh
     vim
-    emacs
+    (import ./emacs.nix { inherit pkgs; })
     haskellPackages.X11
     haskellPackages.xmobar
     haskellPackages.xmonad
     haskellPackages.xmonad-contrib
     haskellPackages.xmonad-extras
     htpdate
+    parcellite
     pcmanfm
     xorg.xbacklight
     xbindkeys
@@ -211,6 +212,9 @@
 
     displayManager.slim.enable = true;
     displayManager.slim.defaultUser = "jonathan";
+    displayManager.sessionCommands = ''
+      ${pkgs.parcellite}/bin/parcellite -n &
+    '';
 
     windowManager.xmonad.enable = true;
     windowManager.xmonad.enableContribAndExtras = true;
