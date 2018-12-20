@@ -3,3 +3,4 @@ set mouse=r
 syntax enable
 colorscheme solarized
 set incsearch hlsearch
+set nowrap
