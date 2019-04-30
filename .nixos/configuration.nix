@@ -28,7 +28,6 @@
     '';
   };
 
-
   networking.hostName = "nixos"; # Define your hostname.
   #networking.networkmanager.enable = true;
   networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -68,7 +67,7 @@
     docker
     exfat
     feh
-    vim
+    (import ./vim.nix)
     (import ./emacs.nix { inherit pkgs; })
     haskellPackages.X11
     haskellPackages.xmobar
