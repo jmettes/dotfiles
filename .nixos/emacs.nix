@@ -1,29 +1,89 @@
 { pkgs ? import <nixpkgs> {} }:
 
+# some day emacs will look as nice as this: https://lepisma.github.io/2017/10/28/ricing-org-mode/
+
 let
   myEmacs = pkgs.emacs;
 
   # https://nixos.org/nixpkgs/manual/#sec-emacs-config
   myEmacsConfig = pkgs.writeText "default.el" ''
+(setq user-full-name "Jonathan Mettes")
+(setq user-mail-address "jonathan@jmettes.com")
+
 ;; disable welcome splash screen
 (setq inhibit-startup-message t)
-(setq inhibit-startup-screen t)
+(setq inhibit-startup-screen nil)
 
 ;; hide menu bar
 (menu-bar-mode -1)
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+
+;; font size
+(set-face-attribute 'default nil :height 120)
+
+;; marking text
+(delete-selection-mode t)
+(transient-mark-mode t)
+(setq x-select-enable-clipboard t)
+
+;; spaces as tabs
+(setq tab-width 2
+      indent-tabs-mode nil)
+
+;; disable backup files
+(setq make-backup-files nil)
+
+;; keybindings
+(global-set-key (kbd "RET") 'newline-and-indent)
+(global-set-key (kbd "C-/") 'comment-or-uncomment-region)
+(global-set-key (kbd "C-=") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
+
+;; show parens
+(show-paren-mode t)
 
 (require 'use-package)
 (package-initialize)
 
 ;; set theme to solarized
-(load-theme 'solarized-dark t)
-(custom-set-faces (if (not window-system) '(default ((t (:background "nil"))))))
+;;(load-theme 'solarized-dark t)
+;;(custom-set-faces (if (not window-system) '(default ((t (:background "nil"))))))
+
+;; set theme to spacemacs
+(load-theme 'spacemacs-dark t)
+
+(use-package spaceline
+  :demand t
+  :init
+  (setq powerline-default-separator 'arrow-fade)
+  :config
+  (require 'spaceline-config)
+  (spaceline-spacemacs-theme))
+
+;; disable ring-bell - i find the flashing annoying
+(setq ring-bell-function 'ignore)
+
+;; make cursor the width of the character it is under
+;; i.e. full width of a TAB
+(setq x-stretch-cursor t)
+
+;; fontify code in code blocks
+(setq org-src-fontify-natively t)
+(setq org-src-tab-acts-natively t)
 
 ;; enable babel
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((python . t)
-   (gnuplot . t)))
+   (gnuplot . t)
+   (shell . t)))
+
+;; specific python version
+(setq org-babel-python-command "python3.8")
+
+;; run babel without asking
+(setq org-confirm-babel-evaluate nil)
 
  ;; evil-mode
 (use-package evil
@@ -46,6 +106,11 @@ let
 
 ;; display inline base64 images
 ;; https://emacs.stackexchange.com/a/41664
+
+;; EXAMPLE:
+;; [[img:iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAYAAAAbQcSUAAAABHNCSVQICAgIfAhkiAAAABxJREFU
+;; KFNj/A8EDFQCTFQyB2zMqGGkh+bgDTMAopkEDG8sASwAAA]]
+;; then run: M-x org-display-inline-images
 
 (require 'org)
 (require 'org-element)
@@ -210,10 +275,19 @@ Hook this function into `org-mode-hook'."
 (add-hook 'org-mode-hook #'org-activate-yank-img-links)
 
 
+;; indent content under headings
+(setq org-startup-indented t)
 
 
+;; scale up size of latex preview
+;; note: previewing latex: c-c c-x c-l
+(setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
 
+;; automatically render latex on startup
+(setq org-startup-with-latex-preview t)
 
+;; automatically toggle latex when cursor exits/enters
+(add-hook 'org-mode-hook 'org-fragtog-mode)
 '';
 
   emacsWithPackages = (pkgs.emacsPackagesNgGen myEmacs).emacsWithPackages;
@@ -228,13 +302,17 @@ cp ${myEmacsConfig} $out/share/emacs/site-lisp/default.el
     org-download
     gnuplot-mode
     gnuplot
+    spacemacs-theme
+    spaceline
+    org-fragtog
   ]) ++ (with epkgs.melpaStablePackages; [
     magit
     use-package
-    solarized-theme
+    #solarized-theme
     nix-mode
     python-mode
     evil
+    better-defaults
   ]) ++ [
     # pkgs.notmuch
   ])
